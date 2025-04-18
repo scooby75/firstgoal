@@ -31,7 +31,6 @@ def show_team_stats(team_name, df, col_name, local):
     if not stats.empty:
         st.markdown(f"### 📊 {team_name} ({local})")
         selected_cols = ['Matches', 'First_Gol', 'Goals', 'PPG']
-        # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
     else:
@@ -54,9 +53,15 @@ if team1 and team2:
         home_stats = home_df[home_df['Team_Home'] == team1].iloc[0]
         away_stats = away_df[away_df['Team_Away'] == team2].iloc[0]
 
+        # Conversão segura para float
+        home_goals = float(home_stats['Goals'])
+        home_matches = float(home_stats['Matches'])
+        away_goals = float(away_stats['Goals'])
+        away_matches = float(away_stats['Matches'])
+
         # Cálculo de gols médios
-        home_avg_goals = home_stats['Goals'] / home_stats['Matches']
-        away_avg_goals = away_stats['Goals'] / away_stats['Matches']
+        home_avg_goals = home_goals / home_matches if home_matches else 0
+        away_avg_goals = away_goals / away_matches if away_matches else 0
 
         # Simulação dos placares prováveis até 4x4
         max_goals = 4
