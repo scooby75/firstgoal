@@ -38,7 +38,7 @@ def show_team_stats(team_name, df, col_name, local):
 
 # Exibição comparativa
 if team1 and team2:
-    st.markdown("## ⚔️ Comparação Head-to-Head")
+    st.markdown("## Head-to-Head")
 
     col1, col2 = st.columns(2)
 
