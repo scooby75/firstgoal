@@ -12,6 +12,10 @@ def load_data():
     
     home_df = pd.read_csv(home_url)
     away_df = pd.read_csv(away_url)
+
+    # Cálculo da média de gols por partida
+    home_df['AVG_Goals'] = (home_df['Goals'] / home_df['Matches']).round(2)
+    away_df['AVG_Goals'] = (away_df['Goals'] / away_df['Matches']).round(2)
     
     return home_df, away_df
 
@@ -29,7 +33,7 @@ def show_team_stats(team_name, df, col_name, local):
     stats = df[df[col_name] == team_name]
     if not stats.empty:
         st.markdown(f"### 📊 Estatísticas de {team_name} ({local})")
-        selected_cols = ['Matches', 'First_Gol', 'PPG']
+        selected_cols = ['Matches', 'First_Gol', 'PPG', 'AVG_Goals']
         # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
