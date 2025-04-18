@@ -15,7 +15,7 @@ def preprocess_df(df, team_col):
     df['Goals_For'] = df['Goals'].str.extract(r'(\d+)').astype(float)
 
     # Calcula média de gols por partida relevante
-    df['AVG_Goals'] = (df['Goals_For'] / df['Matches_Relevant']).round(2)
+    df['AVG_Goals'] = (df['Goals_For'] / df['Matches_Total']).round(2)
 
     # Porcentagem de jogos em que marcou primeiro
     df['First_Goal_Percent'] = (df['Matches_Relevant'] / df['Matches_Total'] * 100).round(1)
@@ -52,8 +52,7 @@ def show_team_stats(team_name, df, col_name, local):
     if not stats.empty:
         st.markdown(f"### 📊 Estatísticas de {team_name} ({local})")
         selected_cols = [
-            'Matches_Relevant', 'Matches_Total', 'First_Goal_Percent',
-            'Goals_For', 'AVG_Goals', 'PPG'
+            'Matches_Total', 'First_Goal_Percent', 'AVG_Goals', 'PPG'
         ]
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
