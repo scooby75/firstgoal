@@ -7,8 +7,8 @@ st.title("⚽ Análise H2H - Gol Marcado Primeiro")
 # Carregamento dos dados do GitHub (substitua pela URL bruta do seu repo)
 @st.cache_data
 def load_data():
-    home_url = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/data/scored_first_home.csv'
-    away_url = 'https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/data/scored_first_away.csv'
+    home_url = 'https://raw.githubusercontent.com/scooby75/firstgoal/refs/heads/main/scored_first_home.csv'
+    away_url = 'https://raw.githubusercontent.com/scooby75/firstgoal/refs/heads/main/scored_first_away.csv'
     
     home_df = pd.read_csv(home_url)
     away_df = pd.read_csv(away_url)
