@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 from itertools import product
+import re
 
 # Título
 st.title("Análise H2H - First Goal")
 
-# Carregamento dos dados do GitHub
+# Função para carregar dados
 @st.cache_data
 def load_data():
     home_url = 'https://raw.githubusercontent.com/scooby75/firstgoal/main/scored_first_home.csv'
@@ -16,16 +17,17 @@ def load_data():
     
     return home_df, away_df
 
+# Carregamento
 home_df, away_df = load_data()
 
-# Seleção dos times com base nos respectivos arquivos
+# Listas de times
 teams_home = sorted(home_df['Team_Home'].dropna().unique())
 teams_away = sorted(away_df['Team_Away'].dropna().unique())
 
 team1 = st.selectbox("Home", teams_home)
 team2 = st.selectbox("Away", teams_away)
 
-# Função para exibir estatísticas com colunas filtradas
+# Função para exibir estatísticas
 def show_team_stats(team_name, df, col_name, local):
     stats = df[df[col_name] == team_name]
     if not stats.empty:
@@ -36,7 +38,12 @@ def show_team_stats(team_name, df, col_name, local):
     else:
         st.warning(f"Nenhuma estatística encontrada para {team_name} ({local})")
 
-# Exibição comparativa e estimativa de placares prováveis
+# Função para extrair número da coluna Matches
+def extract_first_number(value):
+    match = re.search(r'\d+', str(value))
+    return float(match.group()) if match else 0
+
+# Exibição comparativa e cálculo de placar provável
 if team1 and team2:
     st.markdown("## Head-to-Head")
 
@@ -48,24 +55,23 @@ if team1 and team2:
     with col2:
         show_team_stats(team2, away_df, 'Team_Away', 'Fora')
 
-    # Estimativa de placares mais prováveis com base em gols médios
     try:
         home_stats = home_df[home_df['Team_Home'] == team1].iloc[0]
         away_stats = away_df[away_df['Team_Away'] == team2].iloc[0]
 
-        # Extrai gols marcados (antes do '-')
+        # Gols marcados (parte antes do "-")
         home_goals = float(str(home_stats['Goals']).split('-')[0].strip())
         away_goals = float(str(away_stats['Goals']).split('-')[0].strip())
 
-        # Conversão segura de partidas
-        home_matches = float(str(home_stats['Matches']).strip())
-        away_matches = float(str(away_stats['Matches']).strip())
+        # Partidas jogadas
+        home_matches = extract_first_number(home_stats['Matches'])
+        away_matches = extract_first_number(away_stats['Matches'])
 
-        # Cálculo de gols médios
+        # Gols médios
         home_avg_goals = home_goals / home_matches if home_matches else 0
         away_avg_goals = away_goals / away_matches if away_matches else 0
 
-        # Simulação dos placares prováveis até 4x4
+        # Estimativa de placares prováveis
         max_goals = 4
         scorelines = list(product(range(0, max_goals+1), repeat=2))
 
