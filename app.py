@@ -1,8 +1,21 @@
 import streamlit as st
 import pandas as pd
+import re
 
 # Título
 st.title("Análise H2H - First Goal")
+
+# Função de extração e cálculo da média
+def preprocess_df(df, team_col):
+    # Extrai número de partidas de 'Matches' (antes do " out of")
+    df['Matches'] = df['Matches'].str.extract(r'(\d+)').astype(float)
+
+    # Extrai gols marcados da coluna 'Goals' (antes do " - ")
+    df['Goals_For'] = df['Goals'].str.extract(r'(\d+)').astype(float)
+
+    # Calcula a média
+    df['AVG_Goals'] = (df['Goals_For'] / df['Matches']).round(2)
+    return df
 
 # Carregamento dos dados do GitHub
 @st.cache_data
@@ -13,10 +26,9 @@ def load_data():
     home_df = pd.read_csv(home_url)
     away_df = pd.read_csv(away_url)
 
-    # Cálculo da média de gols por partida
-    home_df['AVG_Goals'] = (home_df['Goals'] / home_df['Matches']).round(2)
-    away_df['AVG_Goals'] = (away_df['Goals'] / away_df['Matches']).round(2)
-    
+    home_df = preprocess_df(home_df, 'Team_Home')
+    away_df = preprocess_df(away_df, 'Team_Away')
+
     return home_df, away_df
 
 home_df, away_df = load_data()
@@ -34,7 +46,6 @@ def show_team_stats(team_name, df, col_name, local):
     if not stats.empty:
         st.markdown(f"### 📊 Estatísticas de {team_name} ({local})")
         selected_cols = ['Matches', 'First_Gol', 'PPG', 'AVG_Goals']
-        # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
     else:
