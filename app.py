@@ -21,14 +21,14 @@ home_df, away_df = load_data()
 teams_home = sorted(home_df['Team_Home'].dropna().unique())
 teams_away = sorted(away_df['Team_Away'].dropna().unique())
 
-team1 = st.selectbox("🏠 Selecione o Time da Casa (Home)", teams_home)
-team2 = st.selectbox("🚗 Selecione o Time Visitante (Away)", teams_away)
+team1 = st.selectbox("Home", teams_home)
+team2 = st.selectbox("Away", teams_away)
 
 # Função para exibir estatísticas com colunas filtradas
 def show_team_stats(team_name, df, col_name, local):
     stats = df[df[col_name] == team_name]
     if not stats.empty:
-        st.markdown(f"### 📊 Estatísticas de {team_name} ({local})")
+        st.markdown(f"### 📊 {team_name})")
         selected_cols = ['Matches', 'First_Gol', 'PPG']
         # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
