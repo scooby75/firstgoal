@@ -1,20 +1,25 @@
 import streamlit as st
 import pandas as pd
-import re
 
 # Título
 st.title("Análise H2H - First Goal")
 
-# Função de extração e cálculo da média
+# Função para pré-processar os dados
 def preprocess_df(df, team_col):
-    # Extrai número de partidas de 'Matches' (antes do " out of")
-    df['Matches'] = df['Matches'].str.extract(r'(\d+)').astype(float)
+    # Extrai valores de 'X out of Y' da coluna Matches
+    matches_extracted = df['Matches'].str.extract(r'(\d+)\s+out of\s+(\d+)')
+    df['Matches_Relevant'] = matches_extracted[0].astype(float)
+    df['Matches_Total'] = matches_extracted[1].astype(float)
 
-    # Extrai gols marcados da coluna 'Goals' (antes do " - ")
+    # Extrai gols marcados (primeiro número de "X - Y")
     df['Goals_For'] = df['Goals'].str.extract(r'(\d+)').astype(float)
 
-    # Calcula a média
-    df['AVG_Goals'] = (df['Goals_For'] / df['Matches']).round(2)
+    # Calcula média de gols por partida relevante
+    df['AVG_Goals'] = (df['Goals_For'] / df['Matches_Relevant']).round(2)
+
+    # Porcentagem de jogos em que marcou primeiro
+    df['First_Goal_Percent'] = (df['Matches_Relevant'] / df['Matches_Total'] * 100).round(1)
+
     return df
 
 # Carregamento dos dados do GitHub
@@ -26,9 +31,10 @@ def load_data():
     home_df = pd.read_csv(home_url)
     away_df = pd.read_csv(away_url)
 
+    # Pré-processamento
     home_df = preprocess_df(home_df, 'Team_Home')
     away_df = preprocess_df(away_df, 'Team_Away')
-
+    
     return home_df, away_df
 
 home_df, away_df = load_data()
@@ -45,7 +51,10 @@ def show_team_stats(team_name, df, col_name, local):
     stats = df[df[col_name] == team_name]
     if not stats.empty:
         st.markdown(f"### 📊 Estatísticas de {team_name} ({local})")
-        selected_cols = ['Matches', 'First_Gol', 'AVG_Goals']
+        selected_cols = [
+            'Matches_Relevant', 'Matches_Total', 'First_Goal_Percent',
+            'Goals_For', 'AVG_Goals', 'PPG'
+        ]
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
     else:
