@@ -29,7 +29,7 @@ def show_team_stats(team_name, df, col_name, local):
     stats = df[df[col_name] == team_name]
     if not stats.empty:
         st.markdown(f"### 📊 {team_name} ({local})")
-        selected_cols = ['Matches', 'First_Gol', 'PPG']
+        selected_cols = ['Matches', 'First_Gol', 'Goals', 'PPG']
         # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
         st.dataframe(display_stats.reset_index(drop=True))
