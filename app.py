@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import math  # Importando o módulo math para usar a função factorial
 
 # Título
 st.title("⚽ Análise H2H - Gol Marcado Primeiro")
@@ -61,8 +62,8 @@ def calculate_probable_scores(team1_ppg, team2_ppg):
     # Calculando os placares possíveis com base na média de gols
     for home_goals in range(max_goals + 1):
         for away_goals in range(max_goals + 1):
-            home_prob = np.exp(-team1_goals) * (team1_goals ** home_goals) / np.math.factorial(home_goals)
-            away_prob = np.exp(-team2_goals) * (team2_goals ** away_goals) / np.math.factorial(away_goals)
+            home_prob = np.exp(-team1_goals) * (team1_goals ** home_goals) / math.factorial(home_goals)
+            away_prob = np.exp(-team2_goals) * (team2_goals ** away_goals) / math.factorial(away_goals)
             prob = home_prob * away_prob
             scores.append((home_goals, away_goals, prob))
     
