@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Título
-st.title("⚽ Análise H2H - Gol Marcado Primeiro")
+st.title("Análise H2H - First Goal")
 
 # Carregamento dos dados do GitHub
 @st.cache_data
@@ -21,8 +21,8 @@ home_df, away_df = load_data()
 teams_home = sorted(home_df['Team_Home'].dropna().unique())
 teams_away = sorted(away_df['Team_Away'].dropna().unique())
 
-team1 = st.selectbox("🏠 Selecione o Time da Casa (Home)", teams_home)
-team2 = st.selectbox("🚗 Selecione o Time Visitante (Away)", teams_away)
+team1 = st.selectbox("Home", teams_home)
+team2 = st.selectbox("Away", teams_away)
 
 # Função para exibir estatísticas com colunas filtradas
 def show_team_stats(team_name, df, col_name, local):
@@ -38,7 +38,7 @@ def show_team_stats(team_name, df, col_name, local):
 
 # Exibição comparativa
 if team1 and team2:
-    st.markdown("## ⚔️ Comparação Head-to-Head")
+    st.markdown("## Head-to-Head")
 
     col1, col2 = st.columns(2)
 
