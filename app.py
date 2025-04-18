@@ -32,8 +32,10 @@ def show_team_stats(team_name, df, col_name, local):
         selected_cols = ['Matches', 'First_Gol', 'PPG']
         # Verifica se as colunas existem antes de exibir
         display_stats = stats[selected_cols] if all(col in stats.columns for col in selected_cols) else stats
+        # Garantir que 'PPG' seja numérico e não contenha NaN ou valores não numéricos
+        display_stats['PPG'] = pd.to_numeric(display_stats['PPG'], errors='coerce')
         # Calculando a odd justa a partir do PPG, com verificação para evitar divisão por zero ou valores NaN
-        display_stats['Odd Justa'] = display_stats['PPG'].apply(lambda x: 1 / x if x > 0 else None)
+        display_stats['Odd Justa'] = display_stats['PPG'].apply(lambda x: 1 / x if pd.notna(x) and x > 0 else None)
         st.dataframe(display_stats.reset_index(drop=True))
     else:
         st.warning(f"Nenhuma estatística encontrada para {team_name} ({local})")
