@@ -38,10 +38,14 @@ def show_team_stats(team_name, df, col_name, local):
     else:
         st.warning(f"Nenhuma estatística encontrada para {team_name} ({local})")
 
-# Função para extrair número da coluna Matches
+# Função para extrair o primeiro número de uma string
 def extract_first_number(value):
-    match = re.search(r'\d+', str(value))
-    return float(match.group()) if match else 0
+    try:
+        value = str(value)
+        match = re.search(r'\d+', value)
+        return float(match.group()) if match else 0.0
+    except:
+        return 0.0
 
 # Exibição comparativa e cálculo de placar provável
 if team1 and team2:
@@ -59,9 +63,9 @@ if team1 and team2:
         home_stats = home_df[home_df['Team_Home'] == team1].iloc[0]
         away_stats = away_df[away_df['Team_Away'] == team2].iloc[0]
 
-        # Gols marcados (parte antes do "-")
-        home_goals = float(str(home_stats['Goals']).split('-')[0].strip())
-        away_goals = float(str(away_stats['Goals']).split('-')[0].strip())
+        # Gols marcados (pega só o primeiro número da string "x - y")
+        home_goals = extract_first_number(home_stats['Goals'])
+        away_goals = extract_first_number(away_stats['Goals'])
 
         # Partidas jogadas
         home_matches = extract_first_number(home_stats['Matches'])
