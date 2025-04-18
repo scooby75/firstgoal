@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Título
-st.title("⚽ Análise H2H - Gol Marcado Primeiro")
+st.title("Análise H2H - First Goal")
 
 # Carregamento dos dados do GitHub
 @st.cache_data
