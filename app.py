@@ -36,7 +36,7 @@ def show_team_stats(team_name, df, col_name, local):
     else:
         st.warning(f"Nenhuma estatística encontrada para {team_name} ({local})")
 
-# Exibição comparativa e placares prováveis
+# Exibição comparativa e estimativa de placares prováveis
 if team1 and team2:
     st.markdown("## Head-to-Head")
 
@@ -53,11 +53,13 @@ if team1 and team2:
         home_stats = home_df[home_df['Team_Home'] == team1].iloc[0]
         away_stats = away_df[away_df['Team_Away'] == team2].iloc[0]
 
-        # Conversão segura para float
-        home_goals = float(home_stats['Goals'])
-        home_matches = float(home_stats['Matches'])
-        away_goals = float(away_stats['Goals'])
-        away_matches = float(away_stats['Matches'])
+        # Extrai gols marcados (antes do '-')
+        home_goals = float(str(home_stats['Goals']).split('-')[0].strip())
+        away_goals = float(str(away_stats['Goals']).split('-')[0].strip())
+
+        # Conversão segura de partidas
+        home_matches = float(str(home_stats['Matches']).strip())
+        away_matches = float(str(away_stats['Matches']).strip())
 
         # Cálculo de gols médios
         home_avg_goals = home_goals / home_matches if home_matches else 0
@@ -67,13 +69,11 @@ if team1 and team2:
         max_goals = 4
         scorelines = list(product(range(0, max_goals+1), repeat=2))
 
-        # Calcula uma "distância" entre a expectativa e cada placar
         score_probs = []
         for hg, ag in scorelines:
             diff = abs(hg - home_avg_goals) + abs(ag - away_avg_goals)
             score_probs.append((hg, ag, diff))
 
-        # Ordena do mais provável (menor diferença) para o menos provável
         score_probs_sorted = sorted(score_probs, key=lambda x: x[2])
 
         st.markdown("### 🔮 Estimativa de Placar Mais Provável (com base em gols médios)")
